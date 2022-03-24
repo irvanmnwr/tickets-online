@@ -17,9 +17,10 @@ module.exports = {
   },
   getAllMovie: async (request, response) => {
     try {
-      let { page, limit } = request.query;
+      let { page, limit, sort, name } = request.query;
       page = Number(page);
       limit = Number(limit);
+      name += "%";
       const offset = page * limit - limit;
       const totalData = await movieModel.getCountMovie();
       const totalPage = Math.ceil(totalData / limit);
@@ -29,8 +30,11 @@ module.exports = {
         totalPage,
       };
 
-      const result = await movieModel.getAllMovie(limit, offset);
+      if (!sort) {
+        sort = "id";
+      }
 
+      const result = await movieModel.getAllMovie(limit, offset, sort, name);
       return helperWrapper.response(
         response,
         200,
@@ -104,11 +108,21 @@ module.exports = {
         synopsis,
         updateAt: new Date(Date.now()),
       };
+
+      // eslint-disable-next-line no-restricted-syntax
+      for (const data in setData) {
+        // console.log(data); // property
+        // console.log(setData[data]); // value
+        if (!setData[data]) {
+          delete setData[data];
+        }
+      }
+
       const result = await movieModel.updateMovie(id, setData);
       return helperWrapper.response(
         response,
         200,
-        "Success get data !",
+        "Success update data !",
         result
       );
     } catch (error) {
@@ -118,8 +132,8 @@ module.exports = {
   deleteMovie: async (request, response) => {
     try {
       const { id } = request.params;
-      const result = await movieModel.deleteMovie(id);
-      return helperWrapper.response(response, 200, "Success deleted !", result);
+      await movieModel.deleteMovie(id);
+      return helperWrapper.response(response, 200, `${id} has deleted !`, null);
     } catch (error) {
       return helperWrapper.response(response, 400, "Bad Request", null);
     }
