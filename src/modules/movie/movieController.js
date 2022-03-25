@@ -20,7 +20,7 @@ module.exports = {
       let { page, limit, sort, name } = request.query;
       page = Number(page);
       limit = Number(limit);
-      name += "%";
+      name = `%${name}%`;
       const offset = page * limit - limit;
       const totalData = await movieModel.getCountMovie();
       const totalPage = Math.ceil(totalData / limit);
@@ -31,7 +31,7 @@ module.exports = {
       };
 
       if (!sort) {
-        sort = "id";
+        sort = `id`;
       }
 
       const result = await movieModel.getAllMovie(limit, offset, sort, name);

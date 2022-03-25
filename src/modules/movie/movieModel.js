@@ -17,8 +17,8 @@ module.exports = {
   getAllMovie: (limit, offset, sort, name) =>
     new Promise((resolve, reject) => {
       connection.query(
-        "SELECT * FROM `movie` WHERE name LIKE ? ORDER BY ? ASC LIMIT ? OFFSET ?",
-        [name, sort, limit, offset],
+        `SELECT * FROM movie WHERE name LIKE ? ORDER BY ${sort} LIMIT ? OFFSET ?`,
+        [name, limit, offset],
         (error, result) => {
           if (!error) {
             resolve(result);
