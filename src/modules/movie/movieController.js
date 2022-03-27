@@ -18,6 +18,18 @@ module.exports = {
   getAllMovie: async (request, response) => {
     try {
       let { page, limit, sort, name } = request.query;
+      if (!page) {
+        page = 1;
+      }
+      if (!limit) {
+        limit = 3;
+      }
+      if (!sort) {
+        sort = `id`;
+      }
+      if (!name) {
+        name = "";
+      }
       page = Number(page);
       limit = Number(limit);
       name = `%${name}%`;
@@ -29,10 +41,6 @@ module.exports = {
         totalData,
         totalPage,
       };
-
-      if (!sort) {
-        sort = `id`;
-      }
 
       const result = await movieModel.getAllMovie(limit, offset, sort, name);
       return helperWrapper.response(

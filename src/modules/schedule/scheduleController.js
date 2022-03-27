@@ -6,9 +6,21 @@ module.exports = {
   getAllSchedule: async (request, response) => {
     try {
       let { page, limit, sort, location } = request.query;
+      if (!page) {
+        page = 1;
+      }
+      if (!limit) {
+        limit = 3;
+      }
+      if (!sort) {
+        sort = "id";
+      }
+      if (!location) {
+        location = "";
+      }
       page = Number(page);
       limit = Number(limit);
-      location += "%";
+      location = `%${location}%`;
       const offset = page * limit - limit;
       const totalData = await scheduleModel.getCountSchedule();
       const totalPage = Math.ceil(totalData / limit);
@@ -17,10 +29,6 @@ module.exports = {
         totalData,
         totalPage,
       };
-
-      if (!sort) {
-        sort = "id";
-      }
 
       const result = await scheduleModel.getAllSchedule(
         limit,

@@ -17,8 +17,10 @@ module.exports = {
   getAllSchedule: (limit, offset, sort, location) =>
     new Promise((resolve, reject) => {
       connection.query(
-        "SELECT * FROM `schedule` WHERE location LIKE ? ORDER BY ? ASC LIMIT ? OFFSET ?",
-        [location, sort, limit, offset],
+        `SELECT s.id,s.location,s.premiere,s.price,s.time,m.name,m.category,m.synopsis 
+        FROM schedule as s INNER JOIN movie as m
+        WHERE s.movieId = m.id AND s.location LIKE ? ORDER BY ${sort} LIMIT ? OFFSET ?`,
+        [location, limit, offset],
         (error, result) => {
           if (!error) {
             resolve(result);
