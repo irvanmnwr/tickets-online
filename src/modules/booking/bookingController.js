@@ -33,24 +33,25 @@ module.exports = {
         scheduleId = 1;
       }
       if (!dateBooking) {
-        dateBooking = "yyyy-mm-dd";
+        dateBooking = new Date(Date.now(`y-m-d`));
       }
       if (!timeBooking) {
         timeBooking = "HH:mm:ss";
       }
-      dateBooking = `%${dateBooking}%`;
-      timeBooking = `%${timeBooking}%`;
       const result = await bookingModel.getSeatBooking(
         scheduleId,
         dateBooking,
         timeBooking
       );
-      return helperWrapper.response(
-        response,
-        200,
-        "Success get data !",
-        result
-      );
+      const data = {
+        scheduleId,
+        dateBooking,
+        timeBooking,
+      };
+      return helperWrapper.response(response, 200, "Success get data !", {
+        ...data,
+        result,
+      });
     } catch (error) {
       return helperWrapper.response(response, 400, "Bad Request", null);
     }
@@ -65,66 +66,79 @@ module.exports = {
         totalPayment,
         seat,
       } = request.body;
+      const totalTicket = seat.length;
       const setData = {
         scheduleId,
         dateBooking,
         timeBooking,
+        totalTicket,
         paymentMethod,
         totalPayment,
-        seat,
       };
       const result = await bookingModel.createBooking(setData);
-      return helperWrapper.response(
-        response,
-        200,
-        "Success get data !",
-        result
-      );
+
+      seat.map(async (val) => {
+        const newData = {
+          bookingId: result.insertId,
+          seat: val,
+        };
+        await bookingModel.createSeat(newData);
+      });
+
+      return helperWrapper.response(response, 200, "Success get data !", {
+        ...setData,
+        seat,
+      });
     } catch (error) {
       return helperWrapper.response(response, 400, "Bad Request", null);
     }
   },
-  //   updateSchedule: async (request, response) => {
-  //     try {
-  //       const { id } = request.params;
-  //       const { movieId, premiere, price, location, dateStart, dateEnd, time } =
-  //         request.body;
-  //       const setData = {
-  //         movieId,
-  //         premiere,
-  //         price,
-  //         location,
-  //         dateStart,
-  //         dateEnd,
-  //         time,
-  //         updateAt: new Date(Date.now()),
-  //       };
-  //       // eslint-disable-next-line no-restricted-syntax
-  //       for (const data in setData) {
-  //         // console.log(data); // property
-  //         // console.log(setData[data]); // value
-  //         if (!setData[data]) {
-  //           delete setData[data];
-  //         }
-  //       }
-  //       const result = await scheduleModel.updateSchedule(id, setData);
-  //       return helperWrapper.response(
-  //         response,
-  //         200,
-  //         "Success update data !",
-  //         result
-  //       );
-  //     } catch (error) {
-  //       return helperWrapper.response(response, 400, "Bad Request", null);
-  //     }
-  //   },
-  //   deleteSchedule: async (request, response) => {
-  //     try {
-  //       const { id } = request.params;
-  //       await scheduleModel.deleteSchedule(id);
-  //       return helperWrapper.response(response, 200, `${id} has deleted !`, null);
-  //     } catch (error) {
-  //       return helperWrapper.response(response, 400, "Bad Request", null);
-  //     }
-  //   },
+  updateStatusBooking: async (request, response) => {
+    try {
+      const { id } = request.params;
+      await bookingModel.updateStatusBooking(id);
+      return helperWrapper.response(response, 200, "Success update data !", {
+        id,
+        statusUsed: "deactive",
+      });
+    } catch (error) {
+      return helperWrapper.response(response, 400, "Bad Request", null);
+    }
+  },
+  getDashboardBooking: async (request, response) => {
+    try {
+      let { scheduleId, premiere, location } = request.query;
+      if (!scheduleId) {
+        scheduleId = 1;
+      }
+      if (!premiere) {
+        premiere = "";
+      }
+      if (!location) {
+        location = "";
+      }
+
+      const data = {
+        scheduleId,
+        premiere,
+        location,
+      };
+
+      premiere = `%${premiere}%`;
+      location = `%${location}%`;
+
+      const result = await bookingModel.getDashboardBooking(
+        scheduleId,
+        premiere,
+        location
+      );
+
+      return helperWrapper.response(response, 200, `Success load data!`, {
+        ...data,
+        result,
+      });
+    } catch (error) {
+      return helperWrapper.response(response, 400, "Bad Request", null);
+    }
+  },
 };

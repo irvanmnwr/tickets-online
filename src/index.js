@@ -1,3 +1,6 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
+require("dotenv").config();
+
 const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
@@ -9,7 +12,7 @@ const bodyParser = require("body-parser");
 const routerNavigation = require("./routes/index");
 
 const app = express();
-const port = 3001;
+const port = process.env.PORT;
 
 // midleware
 app.use(morgan("dev"));
