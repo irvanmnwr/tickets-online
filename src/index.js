@@ -23,6 +23,7 @@ app.use(xss());
 app.use(compression());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(express.static("public"));
 
 // ---
 app.use("/", routerNavigation);

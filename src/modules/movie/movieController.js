@@ -1,3 +1,4 @@
+const redis = require("../../config/redis");
 const helperWrapper = require("../../helpers/wrapper");
 // --
 const movieModel = require("./movieModel");
@@ -34,7 +35,12 @@ module.exports = {
       limit = Number(limit);
       name = `%${name}%`;
       const offset = page * limit - limit;
-      const totalData = await movieModel.getCountMovie();
+      const totalData = await movieModel.getCountMovie(
+        limit,
+        offset,
+        sort,
+        name
+      );
       const totalPage = Math.ceil(totalData / limit);
       const pageInfo = {
         page,
@@ -67,6 +73,10 @@ module.exports = {
           null
         );
       }
+
+      // proses untuk menyimpan data ke redist
+      redis.setEx(`getMovie:${id}`, 3600, JSON.stringify(result));
+
       return helperWrapper.response(
         response,
         200,
@@ -89,6 +99,7 @@ module.exports = {
         director,
         duration,
         synopsis,
+        // image: request.file ? request.file.filename
       };
       const result = await movieModel.createMovie(setData);
       return helperWrapper.response(
@@ -140,6 +151,16 @@ module.exports = {
   deleteMovie: async (request, response) => {
     try {
       const { id } = request.params;
+      const result = await movieModel.getMovieById(id);
+
+      if (result.length <= 0) {
+        return helperWrapper.response(
+          response,
+          404,
+          `Data by id ${id} not found`,
+          null
+        );
+      }
       await movieModel.deleteMovie(id);
       return helperWrapper.response(response, 200, `${id} has deleted !`, null);
     } catch (error) {

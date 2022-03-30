@@ -22,7 +22,12 @@ module.exports = {
       limit = Number(limit);
       location = `%${location}%`;
       const offset = page * limit - limit;
-      const totalData = await scheduleModel.getCountSchedule();
+      const totalData = await scheduleModel.getCountSchedule(
+        limit,
+        offset,
+        sort,
+        location
+      );
       const totalPage = Math.ceil(totalData / limit);
       const pageInfo = {
         page,
@@ -133,6 +138,16 @@ module.exports = {
   deleteSchedule: async (request, response) => {
     try {
       const { id } = request.params;
+      const result = await scheduleModel.getScheduleById(id);
+
+      if (result.length <= 0) {
+        return helperWrapper.response(
+          response,
+          404,
+          `Data by id ${id} not found`,
+          null
+        );
+      }
       await scheduleModel.deleteSchedule(id);
       return helperWrapper.response(response, 200, `${id} has deleted !`, null);
     } catch (error) {

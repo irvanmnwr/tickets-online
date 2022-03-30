@@ -99,7 +99,7 @@ module.exports = {
       await bookingModel.updateStatusBooking(id);
       return helperWrapper.response(response, 200, "Success update data !", {
         id,
-        statusUsed: "deactive",
+        statusUsed: "notActive",
       });
     } catch (error) {
       return helperWrapper.response(response, 400, "Bad Request", null);

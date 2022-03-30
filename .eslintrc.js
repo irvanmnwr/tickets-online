@@ -12,6 +12,8 @@ module.exports = {
   },
   plugins: ["prettier"],
   rules: {
+    "prefer-destructuring": ["error", { object: true, array: false }],
+
     "prettier/prettier": [
       "error",
       {
