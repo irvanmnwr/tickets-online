@@ -1,6 +1,7 @@
 const multer = require("multer");
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const cloudinary = require("../config/cloudinary");
+const helperWrapper = require("../helpers/wrapper");
 
 // JIKA MENYIMPAN DATA DI CLOUDINARY
 const storage = new CloudinaryStorage({
@@ -19,6 +20,22 @@ const storage = new CloudinaryStorage({
 //   },
 // });
 
+// cek ekstensi dan limit
+
 const upload = multer({ storage }).single("image");
 
-module.exports = upload;
+const handlingUpload = (request, response, next) => {
+  upload(request, response, (error) => {
+    if (error instanceof multer.MulterError) {
+      // A Multer error occurred when uploading.
+      return helperWrapper.responese(response, 401, error.message, null);
+    }
+    if (error) {
+      // An unknown error occurred when uploading.
+      return helperWrapper.responese(response, 401, error.message, null);
+    }
+    return next();
+  });
+};
+
+module.exports = handlingUpload;

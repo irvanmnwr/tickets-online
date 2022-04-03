@@ -58,6 +58,7 @@ module.exports = {
   },
   createBooking: async (request, response) => {
     try {
+      const { id } = request.decodeToken;
       const {
         scheduleId,
         dateBooking,
@@ -68,6 +69,7 @@ module.exports = {
       } = request.body;
       const totalTicket = seat.length;
       const setData = {
+        userId: id,
         scheduleId,
         dateBooking,
         timeBooking,
@@ -137,6 +139,20 @@ module.exports = {
         ...data,
         result,
       });
+    } catch (error) {
+      return helperWrapper.response(response, 400, "Bad Request", null);
+    }
+  },
+  bookingByUserId: async (request, response) => {
+    try {
+      const { id } = request.decodeToken;
+      const result = await bookingModel.bookingByUserId(id);
+      return helperWrapper.response(
+        response,
+        200,
+        "Success get data !",
+        result
+      );
     } catch (error) {
       return helperWrapper.response(response, 400, "Bad Request", null);
     }

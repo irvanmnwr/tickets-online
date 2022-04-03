@@ -49,6 +49,13 @@ module.exports = {
       };
 
       const result = await movieModel.getAllMovie(limit, offset, sort, name);
+      // Proses Menyimpan data ke redis
+      redis.setEx(
+        `getMovie:${JSON.stringify(request.query)}`,
+        3600,
+        JSON.stringify({ result, pageInfo })
+      );
+
       return helperWrapper.response(
         response,
         200,
@@ -130,8 +137,6 @@ module.exports = {
 
       // eslint-disable-next-line no-restricted-syntax
       for (const data in setData) {
-        // console.log(data); // property
-        // console.log(setData[data]); // value
         if (!setData[data]) {
           delete setData[data];
         }

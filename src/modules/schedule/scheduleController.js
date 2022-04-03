@@ -2,6 +2,8 @@ const helperWrapper = require("../../helpers/wrapper");
 // --
 const scheduleModel = require("./scheduleModel");
 // --
+const redis = require("../../config/redis");
+
 module.exports = {
   getAllSchedule: async (request, response) => {
     try {
@@ -41,6 +43,13 @@ module.exports = {
         sort,
         location
       );
+
+      redis.setEx(
+        `getSchedule:${JSON.stringify(request.query)}`,
+        3600,
+        JSON.stringify({ result, pageInfo })
+      );
+
       return helperWrapper.response(
         response,
         200,
@@ -65,6 +74,10 @@ module.exports = {
           null
         );
       }
+
+      // proses untuk menyimpan data ke redist
+      redis.setEx(`getSchedule:${id}`, 3600, JSON.stringify(result));
+
       return helperWrapper.response(
         response,
         200,
