@@ -16,11 +16,24 @@ module.exports = {
         }
       );
     }),
-  getAllMovie: (limit, offset, sort, name) =>
+  getAllMovie: (limit, offset, sort, name, releaseDate) =>
     new Promise((resolve, reject) => {
+      if (!releaseDate) {
+        connection.query(
+          `SELECT * FROM movie WHERE name LIKE ? ORDER BY ${sort} LIMIT ? OFFSET ?`,
+          [name, limit, offset],
+          (error, result) => {
+            if (!error) {
+              resolve(result);
+            } else {
+              reject(new Error(error.sqlMessage));
+            }
+          }
+        );
+      }
       connection.query(
-        `SELECT * FROM movie WHERE name LIKE ? ORDER BY ${sort} LIMIT ? OFFSET ?`,
-        [name, limit, offset],
+        `SELECT * FROM movie WHERE name LIKE ? AND MONTH(releaseDate) = ? ORDER BY ${sort} LIMIT ? OFFSET ?`,
+        [name, releaseDate, limit, offset],
         (error, result) => {
           if (!error) {
             resolve(result);

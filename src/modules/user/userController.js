@@ -2,6 +2,7 @@ const bcrypt = require("bcryptjs");
 const helperWrapper = require("../../helpers/wrapper");
 // --
 const userModel = require("./userModel");
+const cloudinary = require("../../config/cloudinary");
 // --
 module.exports = {
   getUserById: async (request, response) => {
@@ -86,6 +87,31 @@ module.exports = {
         "oldPassword is wrong",
         null
       );
+    } catch (error) {
+      return helperWrapper.response(response, 400, "Bad Request", null);
+    }
+  },
+  updateImage: async (request, response) => {
+    try {
+      const { id } = request.decodeToken;
+      const result = await userModel.getUserById(id);
+      if (result[0].image) {
+        cloudinary.uploader.destroy(`${result[0].image.split(".")[0]}`);
+      }
+      let image = null;
+      if (request.file.filename) {
+        image = `${request.file.filename}.${
+          request.file.mimetype.split("/")[1]
+        }`;
+      }
+
+      const setData = {
+        image,
+      };
+
+      const newResult = await userModel.updateProfile(id, setData);
+
+      return helperWrapper.response(response, 200, "image uploaded", newResult);
     } catch (error) {
       return helperWrapper.response(response, 400, "Bad Request", null);
     }

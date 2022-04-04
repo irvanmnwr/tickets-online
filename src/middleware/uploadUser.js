@@ -7,18 +7,9 @@ const helperWrapper = require("../helpers/wrapper");
 const storage = new CloudinaryStorage({
   cloudinary,
   params: {
-    folder: "Ticket-online",
+    folder: "Ticket-online-user",
   },
 });
-
-// const storage = multer.diskStorage({
-//   destination(req, file, cb) {
-//     cb(null, "public/upload/movie");
-//   },
-//   filename(req, file, cb) {
-//     cb(null, new Date().toISOString().replace(/:/g, "-") + file.originalname);
-//   },
-// });
 
 // cek ekstensi dan limit
 
@@ -26,7 +17,6 @@ const upload = multer({
   storage,
   limits: {
     fileSize: 1000000, // 1000000 Bytes = 1 MB
-    mimetype: "jpg",
   },
   // eslint-disable-next-line consistent-return
   fileFilter: (req, file, cb) => {

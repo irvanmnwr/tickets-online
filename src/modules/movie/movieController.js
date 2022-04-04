@@ -2,6 +2,7 @@ const redis = require("../../config/redis");
 const helperWrapper = require("../../helpers/wrapper");
 // --
 const movieModel = require("./movieModel");
+const cloudinary = require("../../config/cloudinary");
 // --
 module.exports = {
   getHello: async (request, response) => {
@@ -18,7 +19,8 @@ module.exports = {
   },
   getAllMovie: async (request, response) => {
     try {
-      let { page, limit, sort, name } = request.query;
+      // eslint-disable-next-line prefer-const
+      let { page, limit, sort, name, releaseDate } = request.query;
       if (!page) {
         page = 1;
       }
@@ -48,7 +50,13 @@ module.exports = {
         totalPage,
       };
 
-      const result = await movieModel.getAllMovie(limit, offset, sort, name);
+      const result = await movieModel.getAllMovie(
+        limit,
+        offset,
+        sort,
+        name,
+        releaseDate
+      );
       // Proses Menyimpan data ke redis
       redis.setEx(
         `getMovie:${JSON.stringify(request.query)}`,
@@ -96,12 +104,23 @@ module.exports = {
   },
   createMovie: async (request, response) => {
     try {
-      const { name, category, relaseDate, cast, director, duration, synopsis } =
-        request.body;
+      const image = `${request.file.filename}.${
+        request.file.mimetype.split("/")[1]
+      }`;
+      const {
+        name,
+        category,
+        releaseDate,
+        cast,
+        director,
+        duration,
+        synopsis,
+      } = request.body;
       const setData = {
         name,
         category,
-        relaseDate,
+        image,
+        releaseDate,
         cast,
         director,
         duration,
@@ -122,12 +141,31 @@ module.exports = {
   updateMovie: async (request, response) => {
     try {
       const { id } = request.params;
-      const { name, category, relaseDate, cast, director, duration, synopsis } =
-        request.body;
+      const result = await movieModel.getMovieById(id);
+      if (result[0].image) {
+        cloudinary.uploader.destroy(`${result[0].image.split(".")[0]}`);
+      }
+      let image = null;
+      if (request.file.filename) {
+        image = `${request.file.filename}.${
+          request.file.mimetype.split("/")[1]
+        }`;
+      }
+
+      const {
+        name,
+        category,
+        releaseDate,
+        cast,
+        director,
+        duration,
+        synopsis,
+      } = request.body;
       const setData = {
         name,
         category,
-        relaseDate,
+        image,
+        releaseDate,
         cast,
         director,
         duration,
@@ -142,12 +180,12 @@ module.exports = {
         }
       }
 
-      const result = await movieModel.updateMovie(id, setData);
+      const newResult = await movieModel.updateMovie(id, setData);
       return helperWrapper.response(
         response,
         200,
         "Success update data !",
-        result
+        newResult
       );
     } catch (error) {
       return helperWrapper.response(response, 400, "Bad Request", null);
@@ -166,6 +204,9 @@ module.exports = {
           null
         );
       }
+
+      cloudinary.uploader.destroy(`${result[0].image.split(".")[0]}`);
+
       await movieModel.deleteMovie(id);
       return helperWrapper.response(response, 200, `${id} has deleted !`, null);
     } catch (error) {
