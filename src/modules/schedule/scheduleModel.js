@@ -1,21 +1,6 @@
 const connection = require("../../config/mysql");
 
 module.exports = {
-  getCountSchedule: (limit, offset, sort, location) =>
-    new Promise((resolve, reject) => {
-      connection.query(
-        `SELECT COUNT(*) AS total FROM schedule as s INNER JOIN movie as m
-        WHERE s.movieId = m.id AND s.location LIKE ? ORDER BY ${sort} LIMIT ? OFFSET ?`,
-        [location, limit, offset],
-        (error, result) => {
-          if (!error) {
-            resolve(result[0].total);
-          } else {
-            reject(new Error(error.sqlMessage));
-          }
-        }
-      );
-    }),
   getAllSchedule: (limit, offset, sort, location) =>
     new Promise((resolve, reject) => {
       connection.query(

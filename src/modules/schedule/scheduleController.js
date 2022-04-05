@@ -24,18 +24,6 @@ module.exports = {
       limit = Number(limit);
       location = `%${location}%`;
       const offset = page * limit - limit;
-      const totalData = await scheduleModel.getCountSchedule(
-        limit,
-        offset,
-        sort,
-        location
-      );
-      const totalPage = Math.ceil(totalData / limit);
-      const pageInfo = {
-        page,
-        totalData,
-        totalPage,
-      };
 
       const result = await scheduleModel.getAllSchedule(
         limit,
@@ -43,6 +31,14 @@ module.exports = {
         sort,
         location
       );
+
+      const totalData = result.length;
+      const totalPage = Math.ceil(totalData / limit);
+      const pageInfo = {
+        page,
+        totalData,
+        totalPage,
+      };
 
       redis.setEx(
         `getSchedule:${JSON.stringify(request.query)}`,

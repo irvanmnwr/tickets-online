@@ -1,21 +1,6 @@
 const connection = require("../../config/mysql");
 
 module.exports = {
-  getCountMovie: (limit, offset, sort, name) =>
-    new Promise((resolve, reject) => {
-      connection.query(
-        `SELECT COUNT(*) AS total FROM movie 
-        WHERE name LIKE ? ORDER BY ${sort} LIMIT ? OFFSET ?`,
-        [name, limit, offset],
-        (error, result) => {
-          if (!error) {
-            resolve(result[0].total);
-          } else {
-            reject(new Error(error.sqlMessage));
-          }
-        }
-      );
-    }),
   getAllMovie: (limit, offset, sort, name, releaseDate) =>
     new Promise((resolve, reject) => {
       if (!releaseDate) {

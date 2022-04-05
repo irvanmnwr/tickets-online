@@ -37,18 +37,6 @@ module.exports = {
       limit = Number(limit);
       name = `%${name}%`;
       const offset = page * limit - limit;
-      const totalData = await movieModel.getCountMovie(
-        limit,
-        offset,
-        sort,
-        name
-      );
-      const totalPage = Math.ceil(totalData / limit);
-      const pageInfo = {
-        page,
-        totalData,
-        totalPage,
-      };
 
       const result = await movieModel.getAllMovie(
         limit,
@@ -57,6 +45,13 @@ module.exports = {
         name,
         releaseDate
       );
+      const totalData = result.length;
+      const totalPage = Math.ceil(totalData / limit);
+      const pageInfo = {
+        page,
+        totalData,
+        totalPage,
+      };
       // Proses Menyimpan data ke redis
       redis.setEx(
         `getMovie:${JSON.stringify(request.query)}`,

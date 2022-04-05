@@ -26,7 +26,6 @@ const upload = multer({
   storage,
   limits: {
     fileSize: 1000000, // 1000000 Bytes = 1 MB
-    mimetype: "jpg",
   },
   // eslint-disable-next-line consistent-return
   fileFilter: (req, file, cb) => {

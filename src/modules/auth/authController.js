@@ -37,7 +37,6 @@ module.exports = {
         const token = jwt.sign(
           {
             id: cek[0].id,
-            status: cek[0].status,
           },
           "RAHASIA",
           {
@@ -49,8 +48,10 @@ module.exports = {
           from: "admin",
           to: result.email,
           subject: "verification your email",
-          html: `<p>click link below</p> <p>localhost:3001/user/verification/${token}`,
+          html: `<p>click link below</p> 
+          <p>localhost:3001/auth/verification/${token}`,
         };
+
         const newResult = await emails.sendEmail(templateEmail);
         return helperWrapper.response(
           response,
@@ -130,13 +131,7 @@ module.exports = {
             null
           );
         }
-
-        return helperWrapper.response(
-          response,
-          403,
-          "account activation failed",
-          null
-        );
+        return helperWrapper.response(response, 403, "activation failed", null);
       });
     } catch (error) {
       return helperWrapper.response(response, 400, "Bad Request", null);
