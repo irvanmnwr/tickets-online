@@ -63,28 +63,38 @@ module.exports = {
       const salt = bcrypt.genSaltSync(10);
       const { id } = request.decodeToken;
       const cekuser = await userModel.getUserById(id);
-      const { oldPassword, newPassword } = request.body;
+      const { oldPassword, newPassword, confirmPassword } = request.body;
 
-      //   eslint-disable-next-line consistent-return
-      bcrypt.compare(oldPassword, cekuser[0].password).then(async (doMatch) => {
-        if (doMatch) {
-          const data = {
-            password: await bcrypt.hashSync(newPassword, salt),
-          };
-          await userModel.updateProfile(id, data);
+      if (oldPassword === confirmPassword) {
+        //   eslint-disable-next-line consistent-return
+        bcrypt
+          .compare(oldPassword, cekuser[0].password)
+          .then(async (doMatch) => {
+            if (doMatch) {
+              const data = {
+                password: await bcrypt.hashSync(newPassword, salt),
+              };
+              await userModel.updateProfile(id, data);
 
-          return helperWrapper.response(
-            response,
-            200,
-            "password has changed",
-            null
-          );
-        }
-      });
+              return helperWrapper.response(
+                response,
+                200,
+                "password has changed",
+                null
+              );
+            }
+            return helperWrapper.response(
+              response,
+              400,
+              "oldPassword is wrong",
+              null
+            );
+          });
+      }
       return helperWrapper.response(
         response,
         400,
-        "oldPassword is wrong",
+        "Confirm Password is wrong",
         null
       );
     } catch (error) {

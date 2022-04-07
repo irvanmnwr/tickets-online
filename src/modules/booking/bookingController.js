@@ -1,3 +1,4 @@
+const { v4: uuidv4 } = require("uuid");
 const helperWrapper = require("../../helpers/wrapper");
 // --
 const bookingModel = require("./bookingModel");
@@ -69,6 +70,7 @@ module.exports = {
       } = request.body;
       const totalTicket = seat.length;
       const setData = {
+        id: uuidv4(),
         userId: id,
         scheduleId,
         dateBooking,

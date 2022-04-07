@@ -1,8 +1,9 @@
 const { createClient } = require("redis");
 
 const client = createClient({
-  host: "127.0.0.1",
-  port: 6379,
+  host: "redis-16780.c74.us-east-1-4.ec2.cloud.redislabs.com",
+  port: 16780,
+  password: "N5m8KiRUb7nT1lFvqx2ZMbTZapgStgFN",
 });
 
 (async () => {

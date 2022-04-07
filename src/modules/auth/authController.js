@@ -1,9 +1,11 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const { v4: uuidv4 } = require("uuid");
 const helperWrapper = require("../../helpers/wrapper");
 const authModel = require("./authModel");
 const userModel = require("../user/userModel");
-const emails = require("../../helpers/email");
+const redis = require("../../config/redis");
+const mail = require("../../helpers/mail");
 // --
 module.exports = {
   register: async (request, response) => {
@@ -24,6 +26,7 @@ module.exports = {
       }
 
       const setData = {
+        id: uuidv4(),
         firstName,
         lastName,
         email,
@@ -44,20 +47,20 @@ module.exports = {
           }
         );
 
-        const templateEmail = {
-          from: "admin",
+        const setSendEmail = {
           to: result.email,
-          subject: "verification your email",
-          html: `<p>click link below</p> 
-          <p>localhost:3001/auth/verification/${token}`,
+          subject: "Email Verification !",
+          name: result.firstName,
+          template: "verificationEmail.html",
+          buttonUrl: `localhost:3001/auth/verification/${token}`,
         };
+        // mail.sendMail(setSendEmail);
 
-        const newResult = await emails.sendEmail(templateEmail);
         return helperWrapper.response(
           response,
           200,
           "success create account",
-          newResult
+          null
         );
       }
       return helperWrapper.response(response, 400, "Register Failed", null);
@@ -95,17 +98,60 @@ module.exports = {
           delete payLoad.password;
 
           const token = jwt.sign({ ...payLoad }, "RAHASIA", {
+            expiresIn: "2h",
+          });
+          const refreshToken = jwt.sign({ ...payLoad }, "RAHASIABARU", {
             expiresIn: "24h",
           });
           return helperWrapper.response(response, 200, "success login", {
             id: payLoad.id,
             token,
+            refreshToken,
           });
         }
         return helperWrapper.response(response, 400, "Wrong password", null);
       });
 
       // prosesJWT
+    } catch (error) {
+      return helperWrapper.response(response, 400, "Bad Request", null);
+    }
+  },
+  // eslint-disable-next-line consistent-return
+  refresh: async (request, response) => {
+    try {
+      const { refreshToken } = request.body;
+      const checkToken = await redis.get(`refreshToken:${refreshToken}`);
+      if (checkToken) {
+        return helperWrapper.response(
+          response,
+          403,
+          "Your refresh token cannot be use",
+          null
+        );
+      }
+      jwt.verify(refreshToken, "RAHASIABARU", async (error, result) => {
+        // eslint-disable-next-line no-param-reassign
+        delete result.iat;
+        // eslint-disable-next-line no-param-reassign
+        delete result.exp;
+        const token = jwt.sign({ result }, "RAHASIA", {
+          expiresIn: "2h",
+        });
+        const newRefreshToken = jwt.sign({ result }, "RAHASIABARU", {
+          expiresIn: "24h",
+        });
+        await redis.setEx(
+          `refreshToken:${refreshToken}`,
+          3600 * 48,
+          refreshToken
+        );
+        return helperWrapper.response(response, 200, "success login", {
+          id: result.id,
+          token,
+          refreshToken: newRefreshToken,
+        });
+      });
     } catch (error) {
       return helperWrapper.response(response, 400, "Bad Request", null);
     }
@@ -133,6 +179,18 @@ module.exports = {
         }
         return helperWrapper.response(response, 403, "activation failed", null);
       });
+    } catch (error) {
+      return helperWrapper.response(response, 400, "Bad Request", null);
+    }
+  },
+  logout: async (request, response) => {
+    try {
+      let token = request.headers.authorization;
+      const { refreshToken } = request.body;
+      token = token.split(" ")[1];
+      redis.setEx(`accessToken:${token}`, 3600 * 24, token);
+      redis.setEx(`refreshToken:${refreshToken}`, 3600 * 24, token);
+      return helperWrapper.response(response, 200, "Success logout", null);
     } catch (error) {
       return helperWrapper.response(response, 400, "Bad Request", null);
     }
