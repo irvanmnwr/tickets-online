@@ -4,69 +4,65 @@ const { v4: uuidv4 } = require("uuid");
 const helperWrapper = require("../../helpers/wrapper");
 const authModel = require("./authModel");
 const userModel = require("../user/userModel");
-const redis = require("../../config/redis");
+// const redis = require("../../config/redis");
 const mail = require("../../helpers/mail");
 // --
 module.exports = {
   register: async (request, response) => {
-    try {
-      // encrypt pass in node js
-      // email tidak boleh sama
-      const { firstName, lastName, email, noTelp, password } = request.body;
-      const salt = bcrypt.genSaltSync(10);
-      const cekUser = await authModel.getUserByEmail(email);
-      //   1. jika email tidak ada did alam database
-      if (cekUser.length > 0) {
-        return helperWrapper.response(
-          response,
-          404,
-          "Email already registed",
-          null
-        );
-      }
-
-      const setData = {
-        id: uuidv4(),
-        firstName,
-        lastName,
-        email,
-        noTelp,
-        password: await bcrypt.hashSync(password, salt),
-      };
-      const result = await authModel.register(setData);
-
-      if (result) {
-        const cek = await authModel.getUserByEmail(result.email);
-        const token = jwt.sign(
-          {
-            id: cek[0].id,
-          },
-          "RAHASIA",
-          {
-            expiresIn: "24h",
-          }
-        );
-
-        const setSendEmail = {
-          to: result.email,
-          subject: "Email Verification !",
-          name: result.firstName,
-          template: "verificationEmail.html",
-          buttonUrl: `localhost:3001/auth/verification/${token}`,
-        };
-        // mail.sendMail(setSendEmail);
-
-        return helperWrapper.response(
-          response,
-          200,
-          "success create account",
-          null
-        );
-      }
-      return helperWrapper.response(response, 400, "Register Failed", null);
-    } catch (error) {
-      return helperWrapper.response(response, 400, "Bad Request", null);
-    }
+    // try {
+    //   // encrypt pass in node js
+    //   // email tidak boleh sama
+    //   const { firstName, lastName, email, noTelp, password } = request.body;
+    //   const salt = bcrypt.genSaltSync(10);
+    //   const cekUser = await authModel.getUserByEmail(email);
+    //   //   1. jika email tidak ada did alam database
+    //   if (cekUser.length > 0) {
+    //     return helperWrapper.response(
+    //       response,
+    //       404,
+    //       "Email already registed",
+    //       null
+    //     );
+    //   }
+    //   const setData = {
+    //     id: uuidv4(),
+    //     firstName,
+    //     lastName,
+    //     email,
+    //     noTelp,
+    //     password: await bcrypt.hashSync(password, salt),
+    //   };
+    //   const result = await authModel.register(setData);
+    //   if (result) {
+    //     const cek = await authModel.getUserByEmail(result.email);
+    //     const token = jwt.sign(
+    //       {
+    //         id: cek[0].id,
+    //       },
+    //       "RAHASIA",
+    //       {
+    //         expiresIn: "24h",
+    //       }
+    //     );
+    //     const setSendEmail = {
+    //       to: result.email,
+    //       subject: "Email Verification !",
+    //       name: result.firstName,
+    //       template: "verificationEmail.html",
+    //       buttonUrl: `localhost:3001/auth/verification/${token}`,
+    //     };
+    //     // mail.sendMail(setSendEmail);
+    //     return helperWrapper.response(
+    //       response,
+    //       200,
+    //       "success create account",
+    //       null
+    //     );
+    //   }
+    //   return helperWrapper.response(response, 400, "Register Failed", null);
+    // } catch (error) {
+    //   return helperWrapper.response(response, 400, "Bad Request", null);
+    // }
   },
   // eslint-disable-next-line consistent-return
   login: async (request, response) => {
@@ -121,15 +117,15 @@ module.exports = {
   refresh: async (request, response) => {
     try {
       const { refreshToken } = request.body;
-      const checkToken = await redis.get(`refreshToken:${refreshToken}`);
-      if (checkToken) {
-        return helperWrapper.response(
-          response,
-          403,
-          "Your refresh token cannot be use",
-          null
-        );
-      }
+      // const checkToken = await redis.get(`refreshToken:${refreshToken}`);
+      // if (checkToken) {
+      //   return helperWrapper.response(
+      //     response,
+      //     403,
+      //     "Your refresh token cannot be use",
+      //     null
+      //   );
+      // }
       jwt.verify(refreshToken, "RAHASIABARU", async (error, result) => {
         // eslint-disable-next-line no-param-reassign
         delete result.iat;
@@ -141,11 +137,11 @@ module.exports = {
         const newRefreshToken = jwt.sign({ result }, "RAHASIABARU", {
           expiresIn: "24h",
         });
-        await redis.setEx(
-          `refreshToken:${refreshToken}`,
-          3600 * 48,
-          refreshToken
-        );
+        // await redis.setEx(
+        //   `refreshToken:${refreshToken}`,
+        //   3600 * 48,
+        //   refreshToken
+        // );
         return helperWrapper.response(response, 200, "success login", {
           id: result.id,
           token,
@@ -188,8 +184,8 @@ module.exports = {
       let token = request.headers.authorization;
       const { refreshToken } = request.body;
       token = token.split(" ")[1];
-      redis.setEx(`accessToken:${token}`, 3600 * 24, token);
-      redis.setEx(`refreshToken:${refreshToken}`, 3600 * 24, token);
+      // redis.setEx(`accessToken:${token}`, 3600 * 24, token);
+      // redis.setEx(`refreshToken:${refreshToken}`, 3600 * 24, token);
       return helperWrapper.response(response, 200, "Success logout", null);
     } catch (error) {
       return helperWrapper.response(response, 400, "Bad Request", null);
