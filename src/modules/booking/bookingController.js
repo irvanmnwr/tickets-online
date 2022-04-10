@@ -1,5 +1,6 @@
 const { v4: uuidv4 } = require("uuid");
 const helperWrapper = require("../../helpers/wrapper");
+const helperMidtrans = require("../../helpers/midtrans");
 // --
 const bookingModel = require("./bookingModel");
 // --
@@ -89,9 +90,17 @@ module.exports = {
         await bookingModel.createSeat(newData);
       });
 
-      return helperWrapper.response(response, 200, "Success get data !", {
+      const setDataMidtrans = {
+        id: uuidv4(),
+        total: totalPayment,
+      };
+
+      const resultMidtrans = await helperMidtrans.post(setDataMidtrans);
+      return helperWrapper.response(response, 200, "Success post data !", {
+        id: 1,
         ...setData,
         seat,
+        redirectUrl: resultMidtrans.redirect_url,
       });
     } catch (error) {
       return helperWrapper.response(response, 400, "Bad Request", null);
@@ -159,4 +168,72 @@ module.exports = {
       return helperWrapper.response(response, 400, "Bad Request", null);
     }
   },
+  // postMidtransNotification: async (request, response) => {
+  //   try {
+  //     console.log(request.body);
+  //     const result = await helperMidtrans.notif(request.body);
+  //     const orderId = result.order_id;
+  //     const transactionStatus = result.transaction_status;
+  //     const fraudStatus = result.fraud_status;
+
+  //     console.log(
+  //       `Transaction notification received. Order ID: ${orderId}. Transaction status: ${transactionStatus}. Fraud status: ${fraudStatus}`
+  //     );
+
+  //     // Sample transactionStatus handling logic
+
+  //     if (transactionStatus === "capture") {
+  //       // capture only applies to card transaction, which you need to check for the fraudStatus
+  //       if (fraudStatus === "challenge") {
+  //         // TODO set transaction status on your databaase to 'challenge'
+  //         // UBAH STATUS PEMBAYARAN MENJADI PENDING
+  //         // PROSES MEMANGGIL MODEL untuk mengubah data di dalam database
+  //         // id = orderId;
+  //         const setData = {
+  //           paymentMethod: result.payment_type,
+  //           statusPayment: "PENDING",
+  //           // updatedAt: ...
+  //         };
+  //       } else if (fraudStatus === "accept") {
+  //         // TODO set transaction status on your databaase to 'success'
+  //         // UBAH STATUS PEMBAYARAN MENJADI SUCCESS
+  //         // id = orderId;
+  //         const setData = {
+  //           paymentMethod: result.payment_type,
+  //           statusPayment: "SUCCESS",
+  //           // updatedAt: ...
+  //         };
+  //       }
+  //     } else if (transactionStatus === "settlement") {
+  //       // TODO set transaction status on your databaase to 'success'
+  //       // UBAH STATUS PEMBAYARAN MENJADI SUCCESS
+  //       // id = orderId;
+  //       const setData = {
+  //         paymentMethod: result.payment_type,
+  //         statusPayment: "SUCCESS",
+  //         // updatedAt: ...
+  //       };
+  //       console.log(
+  //         `Sukses melakukan pembayaran dengan id ${orderId} dan data yang diubah ${JSON.stringify(
+  //           setData
+  //         )}`
+  //       );
+  //     } else if (transactionStatus === "deny") {
+  //       // TODO you can ignore 'deny', because most of the time it allows payment retries
+  //       // and later can become success
+  //       // UBAH STATUS PEMBAYARAN MENJADI FAILED
+  //     } else if (
+  //       transactionStatus === "cancel" ||
+  //       transactionStatus === "expire"
+  //     ) {
+  //       // TODO set transaction status on your databaase to 'failure'
+  //       // UBAH STATUS PEMBAYARAN MENJADI FAILED
+  //     } else if (transactionStatus === "pending") {
+  //       // TODO set transaction status on your databaase to 'pending' / waiting payment
+  //       // UBAH STATUS PEMBAYARAN MENJADI PENDING
+  //     }
+  //   } catch (error) {
+  //     return helperWrapper.response(response, 400, "Bad Request", null);
+  //   }
+  // },
 };

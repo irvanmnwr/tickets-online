@@ -40,7 +40,7 @@ module.exports = {
     jwt.verify(token, "RAHASIA", (error, result) => {
       if (!error) {
         request.decodeToken = result;
-        if (result.role === 1) {
+        if (result.role === "1") {
           return next();
         }
         return helperWrapper.response(response, 403, "you're not admin", null);
