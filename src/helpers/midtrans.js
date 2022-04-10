@@ -30,7 +30,7 @@ module.exports = {
     }),
   notif: (data) =>
     new Promise((resolve, reject) => {
-      console.log("NOTIF MIDTRANS RUN");
+      //   console.log("NOTIF MIDTRANS RUN");
       snap.transaction
         .notification(data)
         .then((statusResponse) => {
