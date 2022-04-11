@@ -41,6 +41,16 @@ npm init
 npm install
 ```
 * install all needed dependecies node js
+* configure nodemon package.json script
+```
+ "scripts": {
+    "start": "npx nodemon ."index.js location"
+  },
+```
+* How to run nodemon
+```
+npm start
+```
 
 ## Help
 
