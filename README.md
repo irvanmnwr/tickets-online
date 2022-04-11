@@ -38,6 +38,7 @@ needed before installing program
 * How to run the program
 ```
 npm init
+npm install
 ```
 * install all needed dependecies node js
 
