@@ -52,7 +52,7 @@ module.exports = {
           subject: "Email Verification !",
           name: result.firstName,
           template: "verificationEmail.html",
-          buttonUrl: `localhost:3001/auth/verification/${token}`,
+          buttonUrl: `https://project-tickets-online.herokuapp.com/auth/verification/${token}`,
         };
         mail.sendMail(setSendEmail);
 
