@@ -1,3 +1,4 @@
+/* eslint-disable eqeqeq */
 const { v4: uuidv4 } = require("uuid");
 const helperWrapper = require("../../helpers/wrapper");
 const helperMidtrans = require("../../helpers/midtrans");
@@ -168,6 +169,7 @@ module.exports = {
       return helperWrapper.response(response, 400, "Bad Request", null);
     }
   },
+  // eslint-disable-next-line consistent-return
   postMidtransNotification: async (request, response) => {
     try {
       console.log(request.body);
@@ -182,9 +184,9 @@ module.exports = {
 
       // Sample transactionStatus handling logic
 
-      if (transactionStatus === "capture") {
+      if (transactionStatus == "capture") {
         // capture only applies to card transaction, which you need to check for the fraudStatus
-        if (fraudStatus === "challenge") {
+        if (fraudStatus == "challenge") {
           // TODO set transaction status on your databaase to 'challenge'
           // UBAH STATUS PEMBAYARAN MENJADI PENDING
           // PROSES MEMANGGIL MODEL untuk mengubah data di dalam database
@@ -194,7 +196,7 @@ module.exports = {
             statusPayment: "PENDING",
             // updatedAt: ...
           };
-        } else if (fraudStatus === "accept") {
+        } else if (fraudStatus == "accept") {
           // TODO set transaction status on your databaase to 'success'
           // UBAH STATUS PEMBAYARAN MENJADI SUCCESS
           // id = orderId;
@@ -204,7 +206,7 @@ module.exports = {
             // updatedAt: ...
           };
         }
-      } else if (transactionStatus === "settlement") {
+      } else if (transactionStatus == "settlement") {
         // TODO set transaction status on your databaase to 'success'
         // UBAH STATUS PEMBAYARAN MENJADI SUCCESS
         // id = orderId;
@@ -218,17 +220,17 @@ module.exports = {
             setData
           )}`
         );
-      } else if (transactionStatus === "deny") {
+      } else if (transactionStatus == "deny") {
         // TODO you can ignore 'deny', because most of the time it allows payment retries
         // and later can become success
         // UBAH STATUS PEMBAYARAN MENJADI FAILED
       } else if (
-        transactionStatus === "cancel" ||
-        transactionStatus === "expire"
+        transactionStatus == "cancel" ||
+        transactionStatus == "expire"
       ) {
         // TODO set transaction status on your databaase to 'failure'
         // UBAH STATUS PEMBAYARAN MENJADI FAILED
-      } else if (transactionStatus === "pending") {
+      } else if (transactionStatus == "pending") {
         // TODO set transaction status on your databaase to 'pending' / waiting payment
         // UBAH STATUS PEMBAYARAN MENJADI PENDING
       }
