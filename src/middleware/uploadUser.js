@@ -16,7 +16,7 @@ const storage = new CloudinaryStorage({
 const upload = multer({
   storage,
   limits: {
-    fileSize: 1000000, // 1000000 Bytes = 1 MB
+    fileSize: 1024 * 1024 * 1, // 1000000 Bytes = 1 MB
   },
   // eslint-disable-next-line consistent-return
   fileFilter: (req, file, cb) => {

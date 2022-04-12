@@ -65,36 +65,33 @@ module.exports = {
       const cekuser = await userModel.getUserById(id);
       const { oldPassword, newPassword, confirmPassword } = request.body;
 
-      if (oldPassword === confirmPassword) {
-        //   eslint-disable-next-line consistent-return
-        bcrypt
-          .compare(oldPassword, cekuser[0].password)
-          .then(async (doMatch) => {
-            if (doMatch) {
-              const data = {
-                password: await bcrypt.hashSync(newPassword, salt),
-              };
-              await userModel.updateProfile(id, data);
+      if (newPassword !== confirmPassword) {
+        return helperWrapper.response(
+          response,
+          400,
+          "Confirm Password is wrong",
+          null
+        );
+      }
+      const doMatch = bcrypt.compare(oldPassword, cekuser[0].password);
 
-              return helperWrapper.response(
-                response,
-                200,
-                "password has changed",
-                null
-              );
-            }
-            return helperWrapper.response(
-              response,
-              400,
-              "oldPassword is wrong",
-              null
-            );
-          });
+      if (doMatch) {
+        const data = {
+          password: await bcrypt.hashSync(newPassword, salt),
+        };
+        await userModel.updateProfile(id, data);
+
+        return helperWrapper.response(
+          response,
+          200,
+          "password has changed",
+          null
+        );
       }
       return helperWrapper.response(
         response,
         400,
-        "Confirm Password is wrong",
+        "oldPassword is wrong",
         null
       );
     } catch (error) {

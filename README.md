@@ -12,42 +12,48 @@ ticket-online is an online movie ticket booking software that displays schedules
 
 needed before installing program
 
-* Redis [[here]](https://redis.io)
-* Xampp [[here]](https://www.apachefriends.org/download.html)
+- Redis [[here]](https://redis.io)
+- Xampp [[here]](https://www.apachefriends.org/download.html)
 
 ### Dependencies
 
-* Windows 10/8/7
-* dotenv 16.0.0
-* bcryptjs 2.4.3
-* cloudinary 1.29.0
-* express 4.17.3
-* googleapis 100.0.0
-* jsonwebtoken 8.5.1
-* midtrans-client 1.3.1
-* multer 1.4.4
-* multer-storage-cloudinary 4.0.0
-* mustache 4.2.0
-* mysql2 2.3.3
-* nodemailer 6.7.3
-* redis 4.0.6
-* uuid 8.3.2
+- Windows 10/8/7
+- dotenv 16.0.0
+- bcryptjs 2.4.3
+- cloudinary 1.29.0
+- express 4.17.3
+- googleapis 100.0.0
+- jsonwebtoken 8.5.1
+- midtrans-client 1.3.1
+- multer 1.4.4
+- multer-storage-cloudinary 4.0.0
+- mustache 4.2.0
+- mysql2 2.3.3
+- nodemailer 6.7.3
+- redis 4.0.6
+- uuid 8.3.2
 
 ### Executing program
 
-* How to run the program
+- How to run the program
+
 ```
-npm init
+git clone https://github.com/irvanmnwr/tickets-online
+cd tickets-online
 npm install
 ```
-* install all needed dependecies node js
-* configure nodemon package.json script
+
+- install all needed dependecies node js
+- configure nodemon package.json script
+
 ```
  "scripts": {
     "start": "npx nodemon ."index.js location"
   },
 ```
-* How to run nodemon
+
+- How to run nodemon
+
 ```
 npm start
 ```
@@ -55,6 +61,7 @@ npm start
 ## Help
 
 additions to config and helper.
+
 ```
 npm install cloudinary
 npm install redis
@@ -63,8 +70,9 @@ npm install bycrypt
 ```
 
 .env config
+
 ```
-PORT = 
+PORT =
 
 MYSQL_HOST=
 MYSQL_USER=
@@ -92,7 +100,7 @@ MIDTRANS_CLIENT_KEY=
 
 Contributors names and contact info
 
-irvan munawir 
+irvan munawir
 
 linkedin : [@irvanmnwr](https://id.linkedin.com/in/irvan-munawir)
 
@@ -100,8 +108,8 @@ linkedin : [@irvanmnwr](https://id.linkedin.com/in/irvan-munawir)
 
 ## Version History
 
-* 0.1
-    * Initial Release
+- 0.1
+  - Initial Release
 
 ## License
 

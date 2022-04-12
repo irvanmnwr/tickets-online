@@ -137,11 +137,11 @@ module.exports = {
     try {
       const { id } = request.params;
       const result = await movieModel.getMovieById(id);
-      if (result[0].image) {
+      if (request.file) {
         cloudinary.uploader.destroy(`${result[0].image.split(".")[0]}`);
       }
       let image = null;
-      if (request.file.filename) {
+      if (request.file) {
         image = `${request.file.filename}.${
           request.file.mimetype.split("/")[1]
         }`;
@@ -199,8 +199,9 @@ module.exports = {
           null
         );
       }
-
-      cloudinary.uploader.destroy(`${result[0].image.split(".")[0]}`);
+      if (result[0].image) {
+        cloudinary.uploader.destroy(`${result[0].image.split(".")[0]}`);
+      }
 
       await movieModel.deleteMovie(id);
       return helperWrapper.response(response, 200, `${id} has deleted !`, null);
