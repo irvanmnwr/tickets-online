@@ -5,18 +5,6 @@ const movieModel = require("./movieModel");
 const cloudinary = require("../../config/cloudinary");
 // --
 module.exports = {
-  getHello: async (request, response) => {
-    try {
-      return helperWrapper.response(
-        response,
-        200,
-        "Success get data !",
-        "Hello World"
-      );
-    } catch (error) {
-      return helperWrapper.response(response, 400, "Bad Request", null);
-    }
-  },
   getAllMovie: async (request, response) => {
     try {
       // eslint-disable-next-line prefer-const
@@ -38,6 +26,7 @@ module.exports = {
       name = `%${name}%`;
       const offset = page * limit - limit;
 
+      const allData = await movieModel.getCountMovie();
       const result = await movieModel.getAllMovie(
         limit,
         offset,
@@ -46,7 +35,7 @@ module.exports = {
         releaseDate
       );
       const totalData = result.length;
-      const totalPage = Math.ceil(totalData / limit);
+      const totalPage = Math.ceil(allData / limit);
       const pageInfo = {
         page,
         totalData,

@@ -1,6 +1,19 @@
 const connection = require("../../config/mysql");
 
 module.exports = {
+  getCountMovie: () =>
+    new Promise((resolve, reject) => {
+      connection.query(
+        "SELECT COUNT(*) AS total FROM movie",
+        (error, result) => {
+          if (!error) {
+            resolve(result[0].total);
+          } else {
+            reject(new Error(error.sqlMessage));
+          }
+        }
+      );
+    }),
   getAllMovie: (limit, offset, sort, name, releaseDate) =>
     new Promise((resolve, reject) => {
       if (!releaseDate) {
