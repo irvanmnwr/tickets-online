@@ -20,7 +20,11 @@ const upload = multer({
   },
   // eslint-disable-next-line consistent-return
   fileFilter: (req, file, cb) => {
-    if (file.mimetype === "image/jpg" || file.mimetype === "image/jpeg") {
+    if (
+      file.mimetype === "image/jpg" ||
+      file.mimetype === "image/jpeg" ||
+      file.mimetype === "image/png"
+    ) {
       cb(null, true);
     } else {
       cb(null, false);
