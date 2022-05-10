@@ -13,6 +13,6 @@ Router.use("/movie", movieRoutes);
 Router.use("/schedule", scheduleRoutes);
 Router.use("/booking", middlewareAuth.authentication, bookingRoutes);
 Router.use("/auth", authRoutes);
-Router.use("/user", middlewareAuth.authentication, userRoutes);
+Router.use("/user", userRoutes);
 
 module.exports = Router;

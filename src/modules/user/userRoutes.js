@@ -4,10 +4,24 @@ const Router = express.Router();
 
 const userController = require("./userController");
 const middlewareUpload = require("../../middleware/uploadUser");
+const middlewareAuth = require("../../middleware/auth");
 
 Router.get("/", userController.getUserById);
-Router.patch("/update", userController.updateProfile);
-Router.patch("/updatePassword", userController.updatePassword);
-Router.patch("/updateimage", middlewareUpload, userController.updateImage);
+Router.patch(
+  "/update",
+  middlewareAuth.authentication,
+  userController.updateProfile
+);
+Router.patch(
+  "/updatePassword",
+  middlewareAuth.authentication,
+  userController.updatePassword
+);
+Router.patch(
+  "/updateimage",
+  middlewareAuth.authentication,
+  middlewareUpload,
+  userController.updateImage
+);
 
 module.exports = Router;
