@@ -6,7 +6,7 @@ const userController = require("./userController");
 const middlewareUpload = require("../../middleware/uploadUser");
 const middlewareAuth = require("../../middleware/auth");
 
-Router.get("/", userController.getUserById);
+Router.get("/:id", userController.getUserById);
 Router.patch(
   "/update",
   middlewareAuth.authentication,
