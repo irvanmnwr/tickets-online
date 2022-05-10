@@ -7,7 +7,7 @@ const cloudinary = require("../../config/cloudinary");
 module.exports = {
   getUserById: async (request, response) => {
     try {
-      const { id } = request.decodeToken;
+      const { id } = request.params;
       const result = await userModel.getUserById(id);
 
       if (result.length <= 0) {
