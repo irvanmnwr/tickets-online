@@ -86,7 +86,7 @@ module.exports = {
 
       seat.map(async (val) => {
         const newData = {
-          bookingId: result.insertId,
+          bookingId: setData.id,
           seat: val,
         };
         await bookingModel.createSeat(newData);
@@ -173,7 +173,7 @@ module.exports = {
   // eslint-disable-next-line consistent-return
   postMidtransNotification: async (request, response) => {
     try {
-      console.log(request.body);
+      // console.log(request.body);
       const result = await helperMidtrans.notif(request.body);
       const orderId = result.order_id;
       const transactionStatus = result.transaction_status;
