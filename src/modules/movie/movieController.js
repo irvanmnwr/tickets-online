@@ -21,6 +21,9 @@ module.exports = {
       if (!name) {
         name = "";
       }
+      if (!releaseDate) {
+        releaseDate = "";
+      }
       page = Number(page);
       limit = Number(limit);
       name = `%${name}%`;
