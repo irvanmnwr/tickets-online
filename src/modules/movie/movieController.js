@@ -157,9 +157,8 @@ module.exports = {
         director,
         duration,
         synopsis,
-        updateAt: new Date(Date.now()),
+        updatedAt: new Date(Date.now()),
       };
-
       // eslint-disable-next-line no-restricted-syntax
       for (const data in setData) {
         if (!setData[data]) {
@@ -175,6 +174,7 @@ module.exports = {
         newResult
       );
     } catch (error) {
+      console.log(error);
       return helperWrapper.response(response, 400, "Bad Request", null);
     }
   },
