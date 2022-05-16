@@ -6,6 +6,7 @@ const bookingController = require("./bookingController");
 
 Router.get("/dashboard", bookingController.getDashboardBooking);
 Router.get("/seat", bookingController.getSeatBooking);
+Router.get("/bookingByUser/:id", bookingController.getBookingByUserId);
 Router.get("/:id", bookingController.getBookingById);
 Router.post("/", bookingController.createBooking);
 Router.patch("/:id", bookingController.updateStatusBooking);

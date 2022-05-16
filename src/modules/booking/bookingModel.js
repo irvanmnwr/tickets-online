@@ -40,6 +40,23 @@ module.exports = {
         }
       );
     }),
+  getBookingByUserId: (id) =>
+    new Promise((resolve, reject) => {
+      connection.query(
+        `SELECT b.*, s.premiere, m.name from booking as b 
+        inner join schedule as s on s.id = b.scheduleId  
+        INNER JOIN movie as m on m.id = s.movieId 
+        where b.userId = ?;`,
+        id,
+        (error, result) => {
+          if (!error) {
+            resolve(result);
+          } else {
+            reject(new Error(error.sqlMessage));
+          }
+        }
+      );
+    }),
   getSeatBooking: (scheduleId, dateBooking, timeBooking) =>
     new Promise((resolve, reject) => {
       connection.query(

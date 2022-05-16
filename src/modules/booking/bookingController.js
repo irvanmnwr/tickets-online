@@ -30,6 +30,20 @@ module.exports = {
       return helperWrapper.response(response, 400, "Bad Request", null);
     }
   },
+  getBookingByUserId: async (request, response) => {
+    try {
+      const { id } = request.params;
+      const result = await bookingModel.getBookingByUserId(id);
+      return helperWrapper.response(
+        response,
+        200,
+        "Success get data !",
+        result
+      );
+    } catch (error) {
+      return helperWrapper.response(response, 400, "Bad Request", null);
+    }
+  },
   getSeatBooking: async (request, response) => {
     try {
       let { scheduleId, dateBooking, timeBooking } = request.query;
