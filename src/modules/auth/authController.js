@@ -5,7 +5,7 @@ const helperWrapper = require("../../helpers/wrapper");
 const authModel = require("./authModel");
 const userModel = require("../user/userModel");
 const redis = require("../../config/redis");
-// const mail = require("../../helpers/mail");
+const mail = require("../../helpers/mail");
 // --
 module.exports = {
   register: async (request, response) => {
@@ -54,7 +54,7 @@ module.exports = {
           template: "verificationEmail.html",
           buttonUrl: `https://project-tickets-online.herokuapp.com/auth/verification/${token}`,
         };
-        // mail.sendMail(setSendEmail);
+        mail.sendMail(setSendEmail);
 
         return helperWrapper.response(
           response,
