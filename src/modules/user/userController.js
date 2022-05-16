@@ -37,7 +37,7 @@ module.exports = {
         lastName,
         noTelp,
         email,
-        updateAt: new Date(Date.now()),
+        updatedAt: new Date(Date.now()),
       };
 
       // eslint-disable-next-line no-restricted-syntax
@@ -55,6 +55,7 @@ module.exports = {
         result
       );
     } catch (error) {
+      console.log(error);
       return helperWrapper.response(response, 400, "Bad Request", null);
     }
   },
