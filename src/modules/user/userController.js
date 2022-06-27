@@ -31,12 +31,13 @@ module.exports = {
   updateProfile: async (request, response) => {
     try {
       const { id } = request.decodeToken;
-      const { firstName, lastName, noTelp, email } = request.body;
+      const { firstName, lastName, noTelp, email, image } = request.body;
       const setData = {
         firstName,
         lastName,
         noTelp,
         email,
+        image,
         updatedAt: new Date(Date.now()),
       };
 
